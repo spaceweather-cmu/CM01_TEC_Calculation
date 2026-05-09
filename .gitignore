@@ -1,0 +1,7 @@
+DCB/
+*.BIA.gz
+*.BIA
+*.BSX.gz
+*.BSX
+
+RINEX/

@@ -33,15 +33,15 @@ warning off
 % =========== Program's path ==========================
 p_path = 'C:\Users\Jumbo\Desktop\TEC_CMU\';             % Program path
 R_path = [p_path 'RINEX\'];     % RINEX path
-if ~isempty([p_path 'result\']);mkdir([p_path 'result\']);end
+if ~exist([p_path 'result\'],"dir");mkdir([p_path 'result\']);end
 % mat results path
 S_path = [p_path 'result\matfile\'];
-if ~isempty(S_path);mkdir(S_path);end
+if ~exist(S_path,"dir");mkdir(S_path);end
 % figure and video result path
 F_path = [p_path 'result\figure\'];
-if ~isempty(F_path);mkdir(F_path);end
+if ~exist(F_path,"dir");mkdir(F_path);end
 D_path = [p_path 'result\daily\']
-if ~isempty(D_path);mkdir(D_path);end
+if ~exist(D_path,"dir");mkdir(D_path);end
        % .mat Results path
         % figure and video Results path
 
@@ -55,7 +55,7 @@ path(path,[p_path 'function']);
 % date of the file (choose the date of observation file)
 yr = '2026'
 filelist = char({dir("RINEX\*.26o").name});
-parfor index = 1:size(filelist,1)
+for index = 1:size(filelist,1)
     
     [~, outname, ~] = fileparts(filelist(index,:));
     % outname = char(outname); %convert to single-quote string (array of char)
@@ -70,20 +70,20 @@ parfor index = 1:size(filelist,1)
     % check save file
     % stationcall = checksavefiles(d,station,S_path);
 
-    if ~exist([S_path outname '.mat'],"file")
-        % [can skip this] Copy files from NAS (server 1) (need to connect the same LAN)
-        % nasstatus      = dlRNX3fromNAS(d,stationrecallist,R_path);
-        % delete([R_path '*n']) %% remove nav file, use nav from CDDIS
-        % Download NAV from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/2024/brdc]
-        navstatus      = getgnssnav(d,R_path);
-        % Download DCB from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
-        DCB            = getgnssdcb(d,DCB_path);
-        % Check RINEX file
-        file_rcvstatus = checkRINEX(d,R_path);
-        % Read RINEX file and Calculate TEC/ROTI and save in .mat file
-        cal_status     = rnx2tec30(file_rcvstatus,d,DCB,R_path,S_path,outname);
+    if exist([S_path outname '.mat'],"file")
+        continue
     end
-
+    % [can skip this] Copy files from NAS (server 1) (need to connect the same LAN)
+    % nasstatus      = dlRNX3fromNAS(d,stationrecallist,R_path);
+    % delete([R_path '*n']) %% remove nav file, use nav from CDDIS
+    % Download NAV from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/2024/brdc]
+    navstatus      = getgnssnav(d,R_path);
+    % Download DCB from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
+    DCB            = getgnssdcb(d,DCB_path);
+    % Check RINEX file
+    % file_rcvstatus = checkRINEX(d,R_path);
+    % Read RINEX file and Calculate TEC/ROTI and save in .mat file
+    % cal_status     = rnx2tec30(file_rcvstatus,d,DCB,R_path,S_path,outname);
 end
 % mat21Dgraph30(d,station,S_path,F_path)
 
