@@ -5,3 +5,6 @@ DCB/
 *.BSX
 
 RINEX/
+*.mat
+*.crx.gz
+*.V3status

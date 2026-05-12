@@ -1,4 +1,4 @@
-function DCB = getgnssdcbJumbo(d, DCB_path)
+function DCB = getgnssdcb(d, DCB_path)
 cd(DCB_path)
 % Download GNSS DCB from cddis website [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
 % provided by Chinese Academy of Sciences (CAS) or GeoForschungsZentrum Potsdam (GFZ)
@@ -25,28 +25,24 @@ if isempty(DCB_list) % download if DCB file does not exist
     perfix = ["CAS0MGXRAP_", "CAS0OPSRAP_", "GFZ0MGXRAP_"];
     suffix = ["BSX", "BIA", "BSX"];
     url = "ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/" + year_str + "/";
+    % host = "gdc.cddis.eosdis.nasa.gov";
     username = "anonymous:cssrg.telecom@gmail.com";
-    try
-        ftpobj = ftp(url, username,"TLSMode","opportunistic");
-        for i = 1:3
-            for attempt = 1:4       
-                try
-                    % download DCB file (from CAS)
-                    DCB_name_gz = perfix(i) + year_str + doy_str + "0000_01D_01D_DCB."+suffix(i)+".gz";
-                    mget(ftpobj,DCB_name_gz);
-                    % system("curl -u " + username + " -O --ftp-ssl " + url + DCB_name_gz)
-                    download_success = true;
-                    break;
-                catch err
-                    disp(err.message)
-                    pause(3) %pause, then retry
-                end
+
+    for i = 1:3
+        fprintf("download file with name %d of 3...",i)
+        for attempt = 1:4       
+            % download DCB file (from CAS)
+            DCB_name_gz = perfix(i) + year_str + doy_str + "0000_01D_01D_DCB."+suffix(i)+".gz";
+            [status, ~] = system("..\apps\curl.exe -u " + username + " -O --ftp-ssl " + url + DCB_name_gz);
+            if status == 0
+                download_success = true;
+                break;
             end
-            if download_success; break; end
         end
-    catch err
-        disp(err.message);
+        if download_success; sprintf("success\n"); break; end
+        fprintf("fail\n")
     end
+    if ~download_success; error("fail to download"); end
 
 else % in case file already exist, use it
     disp("use existing DCB file")
@@ -118,3 +114,5 @@ for i = 1:length(sat_list)
         DCB.(sat_list(i)).val  = rDCB(mask);
     end
 end
+
+cd("..")

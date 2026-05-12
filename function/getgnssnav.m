@@ -7,14 +7,13 @@ function navstatus = getgnssnav(d,NAV_path)
 %%
 current_folder = [pwd '\'];
 % doy calculation
-[yr,doy] = find_doy(d);
-Year     = num2str(yr);
-doy      = num2str(doy,'%.3d');
+doy_str      = string(d,"ddd");
+year_str     = string(d,"yyyy");
 % BRDM00DLR_S_20242460000_01D_MN.rnx
 % BRDC_namez   = ['BRD400DLR_S_' Year doy '0000_01D_MN.rnx.gz']; % RNX version 4
 % BRDC_navname = ['BRD4' doy '0.' Year(3:4) 'n'];
-BRDC_namez   = ['BRDM00DLR_S_' Year doy '0000_01D_MN.rnx.gz'];
-BRDC_navname = ['BRDM' doy '0.' Year(3:4) 'n'];
+BRDC_namez   = ['BRDM00DLR_S_' year_str doy_str '0000_01D_MN.rnx.gz'];
+BRDC_navname = ['BRDM' doy_str '0.' year_str(3:4) 'n'];
 
 file_NAV_z = dir([NAV_path BRDC_namez]);
 file_NAV   = dir([NAV_path BRDC_navname]);
@@ -31,7 +30,7 @@ else
         dl_status = 0;
         round = 0;
         while dl_status == 0 && round <=3
-            source1 = ['ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/' Year '/brdc/' BRDC_namez];
+            source1 = ['ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/' year_str '/brdc/' BRDC_namez];
             cd(NAV_path)
             dcb_cmd1 = ['curl -u anonymous:cssrg.telecom@gmail.com -O --ftp-ssl ' source1];
             system(dcb_cmd1);
