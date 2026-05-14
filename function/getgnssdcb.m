@@ -7,15 +7,15 @@ cd(DCB_path)
 %% check date
 today = datetime("today");
 
-date_data = d - (day(d)-1);
+DCB_date = d - (day(d)-1);
 
 if days(today - d) < 25 % 25 days
-    date_data = date_data - calmonths(1);
+    DCB_date = DCB_date - calmonths(1);
 end
-disp(date_data)
+disp(DCB_date)
 % get doy calculation
-doy_str      = string(date_data,"ddd");
-year_str     = string(date_data,"yyyy");
+doy_str      = string(DCB_date,"ddd");
+year_str     = string(DCB_date,"yyyy");
 
 DCB_list = dir("*_" + year_str + doy_str + "0000_01D_01D_DCB.*.gz");
 

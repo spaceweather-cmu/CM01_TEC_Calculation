@@ -45,10 +45,15 @@ DCB_path   = "DCB\";
 year_str = "2026";
 yr_str = extractAfter(year_str,2);
 
-filelist = char({dir("RINEX\*."+yr_str+"o").name});
+filelist = string({dir("RINEX\*."+yr_str+"o").name});
+doy_list = extractBetween(filelist,5,7);
+date_head = datetime("0000-01-01");
+
+% prepare DCB
+
 for index = 1:size(filelist,1)
     
-    [~, outname, ~] = fileparts(filelist(index,:));
+    [~, outname, ~] = fileparts(filelist(index));
     % outname = char(outname); %convert to single-quote string (array of char)
     doy = str2double(extractBetween(outname,5,7));
     d = datetime("1-Jan-" + year_str) + (doy-1);
@@ -70,7 +75,7 @@ for index = 1:size(filelist,1)
     % Download NAV from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/2024/brdc]
     % navstatus      = getgnssnav(d,RINEX_path);
     % Download DCB from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
-    DCB            = getgnssdcb(d,DCB_path);
+    DCB = getgnssdcb(d,DCB_path);
     % Check RINEX file
     % file_rcvstatus = checkRINEX(d,RINEX_path);
     % Read RINEX file and Calculate TEC/ROTI and save in .mat file
