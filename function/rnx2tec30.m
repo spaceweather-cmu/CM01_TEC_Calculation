@@ -9,15 +9,13 @@
 %       dcb   - satellite DCB
 %       R_path   - RINEX folder path
 %       S_path   - results folder path
-function calstat = rnx2tec30(rnxstat,dates,dcb,R_path,S_path)
+function calstat = rnx2tec30(rnxstat,d,dcb,R_path,S_path,outname)
 
 
-[yr,doy] = find_doy(dates);
-date_s = datevec(dates);
-yr   = num2str(yr);
-mth  = num2str(date_s(2),'%.2d');
-dt   = num2str(date_s(3),'%.2d');
-doy  = num2str(doy,'%.3d');
+year_str     = string(d,"yyyy");
+mth_str      = string(d,'MM');
+day_str      = string(d,"dd");
+doy_str      = string(d,"DDD");
 calstat = cell(size(rnxstat,1),2);
 for st = 1:size(rnxstat,1)
     tic
@@ -26,18 +24,18 @@ for st = 1:size(rnxstat,1)
     station_name = rnxstat{st,1};
     obsfile_name = rnxstat{st,2};
     navfile_name = rnxstat{st,3};
-    navfile = dir([R_path '*' doy '0.' yr(3:4) 'n']);
-    filename = [S_path yr '\' doy '\TECROTI_' doy '_' yr mth dt '_' station_name '.mat'];
+    navfile = dir(R_path + "*" + doy_str + "0." + extractAfter(year_str,2) + "n");
+    filename = S_path + year_str + "\" + doy_str + "\TECROTI_" + doy_str + "_" + year_str + mth_str + day_str + "_" + station_name + ".mat";
     matfile = dir(filename);
     if ~isempty(matfile)
-        disp(['Skip estimate TEC at ' station_name ', it already calculated'])
+        disp("Skip estimate TEC at " + station_name + ", it already calculated")
         continue;
     end
-    disp(['Estimate TEC at ' station_name ' station'])
+    disp("Estimate TEC at " + station_name + " station")
     %% Read Observation file and Navigation file
     [obs_head, obs_data, nav_head, nav_data] = readrinexfile30(R_path,obsfile_name,navfile_name);
     if isempty(obs_head) || isempty(nav_head)
-        disp(['Skip calculate TEC at ' station_name ', RINEX file is missing'])
+        disp("Skip calculate TEC at " + station_name + ", RINEX file is missing")
         return
     end
 
@@ -63,12 +61,12 @@ for st = 1:size(rnxstat,1)
     % end
     %% find ref position
     refpos = obs_head.posxyz;
-    disp(['Calculate TEC at ' station_name ' station'])
+    disp("Calculate TEC at " + station_name + " station")
     if isempty(refpos)
         try
             refpos = reffromIPPindex(station_name);
         catch
-            disp(['Cannot find ref position: ' station_name])
+            disp("Cannot find ref position: " + station_name)
             return
         end
     end
@@ -76,7 +74,7 @@ for st = 1:size(rnxstat,1)
     datestt = gpst2time(obs_head.ts);
     year  = num2str(datestt(1));
     month = num2str(datestt(2),'%.2d');
-    dt     = num2str(datestt(3),'%.2d');
+    day_str     = num2str(datestt(3),'%.2d');
     %% Extract the obs and nav data
     gtime       = [obs_data.gtime]; % gps time
     [time_str,time_stp] = bounds(gtime);
@@ -96,7 +94,7 @@ for st = 1:size(rnxstat,1)
     rawPRN      = char(uintA');
     gnsssys     = string(rawPRN(:,1));  % PRN
     gnssprn     = cellstr(string(rawPRN(:,2:3)));
-    gnssprn     = str2doubleq(gnssprn)'; % satellite constellation
+    gnssprn     = str2double(gnssprn)'; % satellite constellation
 
     %% extract Frequency, P, L, (D and S) data
     freq = reshape([obs_data.freq],[40,length(obs_data)])'; %
@@ -130,7 +128,7 @@ for st = 1:size(rnxstat,1)
         otype = otype(2:end);
         [pairing, pindex, lindex] = obstype2pair(otype);  % find all combination
         if isempty(pairing)
-            disp([char(sys_name) ' system: No paring '])
+            disp(sys_name + " system: No paring ")
             continue
         end
         %% Choose paring
@@ -188,16 +186,16 @@ for st = 1:size(rnxstat,1)
                 typepair(:,pind) = pairing(best_pair,:);
 
                 if sum(~isnan(P1+P2))<length(gpst)/2 || sum(~isnan(L1+L2))<length(gpst)/2
-                    % disp(['SYS:' char(sys_name) ' PRN# ... ' num2str(prn) ' - Not enough pseudoranges pair:' char(pairing(pr,1)) '-' char(pairing(pr,2))])
+                    % disp("SYS:" +sys_name + " PRN# ... " + num2str(prn) + " - Not enough pseudoranges pair:" + pairing(pr,1) + '-' + pairing(pr,2))
                     continue
                 end
                 flag = 1;
             catch
-                % disp([char(sys_name) ' system has enogth data of this pair:' char(pairing(pr,1)) '-' char(pairing(pr,2))])
+                % disp(sys_name + " system has not enough data of this pair:" + pairing(pr,1) + '-' + pairing(pr,2))
                 continue
             end
             if flag==0
-                % disp(['SYS:' char(sys_name) ' PRN# ... ' num2str(prn) ' - Not enough pseudoranges'])
+                % disp("SYS:" +sys_name + " PRN# ... " + num2str(prn) + " - Not enough pseudoranges")
                 continue
             end
             try
@@ -262,7 +260,7 @@ for st = 1:size(rnxstat,1)
         stec    = outlinecorr(stec_r);
         vtec    = outlinecorr(vtec_r);
         % Using zero adjust TEC (Minimum TEC is Zero)
-        tec_min      =  min(stec,[],"all");
+        tec_min = min(min(stec, [], 'omitnan'), [], 'omitnan');
         stec         =  stec  + tec_min;
         vtec         =  vtec  + tec_min;
 
@@ -283,35 +281,36 @@ for st = 1:size(rnxstat,1)
         elseif sys_name == 'I'
             systemname = 'IRN';
         end
-        eval([station_name '.' systemname '.date   = datestt;'])
-        eval([station_name '.' systemname '.fpair  = typepair;'])
-        eval([station_name '.' systemname '.PRN    = PRN;'])
-        eval([station_name '.' systemname '.ind    = tind_m;'])
-        eval([station_name '.' systemname '.times  = times_m;'])
-        eval([station_name '.' systemname '.vtec   = vtec;'])
-        eval([station_name '.' systemname '.stec   = stec;'])
-        eval([station_name '.' systemname '.roti   = roti;'])
-        eval([station_name '.' systemname '.ipplat = ipplat_m;'])
-        eval([station_name '.' systemname '.ipplon = ipplon_m;'])
-        eval([station_name '.' systemname '.elev   = elev_m;'])
-        eval([station_name '.' systemname '.rdcb   = rdcb;'])
-        eval([station_name '.' systemname '.sdcb   = sdcb;'])
+        eval(station_name + '.' + systemname + ".date   = datestt;")
+        eval(station_name + '.' + systemname + ".fpair  = typepair;")
+        eval(station_name + '.' + systemname + ".PRN    = PRN;")
+        eval(station_name + '.' + systemname + ".ind    = tind_m;")
+        eval(station_name + '.' + systemname + ".times  = times_m;")
+        eval(station_name + '.' + systemname + ".vtec   = vtec;")
+        eval(station_name + '.' + systemname + ".stec   = stec;")
+        eval(station_name + '.' + systemname + ".roti   = roti;")
+        eval(station_name + '.' + systemname + ".ipplat = ipplat_m;")
+        eval(station_name + '.' + systemname + ".ipplon = ipplon_m;")
+        eval(station_name + '.' + systemname + ".elev   = elev_m;")
+        eval(station_name + '.' + systemname + ".rdcb   = rdcb;")
+        eval(station_name + '.' + systemname + ".sdcb   = sdcb;")
 
-        disp(['Finish ' systemname ' at ' station_name ' station'])
+        disp("Finish " + systemname + " at " + station_name + " station")
     end
 
     %% inter system biases correction
     % estimate inter-system bias using GPS as baseline
     % eval([station_name '= intersystembias(' station_name ');']);
     %% Save file
-    eval([station_name '.z_rcvpos   = refpos;'])
-    if ~isempty([S_path year]);mkdir([S_path year]);end
-    if ~isempty([S_path year '\' doy]);mkdir([S_path year '\' doy]);end
-    filename = [S_path year '\' doy '\TECROTI_' doy '_' year month dt '_' station_name '.mat'];
+    eval(station_name + ".z_rcvpos   = refpos;")
+    if ~exist(S_path+year,"dir");mkdir(S_path+year);end
+    % if ~exist(S_path + year + '\' + doy_str,"dir");mkdir(S_path + year + '\' + doy_str);end
+    %filename = S_path year + '\' + doy + "\TECROTI_" + doy + '_' + year + month + dt + '_' + station_name + ".mat";
+    filename = S_path + year + '\' + outname + ".mat";
     save(filename,station_name)
-    disp(['Complete to Calculate TEC at ' station_name ' station'])
+    disp("Complete to Calculate TEC at " + station_name + " station")
     calstat{st,1} = station_name;
-    calstat{st,2} = 'avialable';
+    calstat{st,2} = "avialable";
     toc
 	clearvars -except calstat date_s dates dcb doy dt mth R_path rnxstat S_path st yr
 end

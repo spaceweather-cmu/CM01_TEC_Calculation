@@ -45,33 +45,13 @@ figure_path = "result\figure\";
 if ~exist(figure_path,"dir"); mkdir(figure_path); end
 daily_path = "result\daily\";
 if ~exist(daily_path,"dir"); mkdir(daily_path); end
+
+% data file path
 DCB_path   = "DCB\";
 mat_path = "result\mat\";
 if ~isempty(mat_path);mkdir(mat_path);end
 
-% p_path = "C:\Users\Jumbo\Desktop\TEC_CMU\";             % Program path
-% R_path = [p_path 'RINEX\'];     % RINEX path
-% if ~isempty([p_path 'result\']);mkdir([p_path 'result\']);end
-% % mat results path
-% S_path = [p_path 'result\matfile\'];
-% if ~isempty(S_path);mkdir(S_path);end
-% % figure and video result path
-% F_path = [p_path 'result\figure\'];
-% if ~isempty(F_path);mkdir(F_path);end
-% D_path = [p_path 'result\daily\']
-% if ~isempty(D_path);mkdir(D_path);end
-       % .mat Results path
-        % figure and video Results path
-
-% DCB_path   = [p_path 'DCB\'];                   % DCB path
-% addpath(path,[p_path 'function']);
-
-%[yr,doy] = find_doy(d);
-%doy      = num2str(doy,'%.3d');
-%yr       = num2str(yr);
-
 % date of the file (choose the date of observation file)
-% outname ="CM010020"
 outname = "CM013160";
 yr = "2025";
 doy = str2double(extractBetween(outname,5,7));
@@ -81,21 +61,21 @@ stations = {"CMU01"}; % Define the station name from OBS file {'RUTI','CPN1','NU
 % stationplotlists = {'KMI6','RUTI'}; % choose stations to be plotted
 stationplotlists = stations;
 
-%% check save file
+% check save file
 stationrecallist = checksavefiles(d,stations,mat_path);
 
 if ~isempty(stationrecallist)
-    %% [can skip this] Copy files from NAS (server 1) (need to connect the same LAN)
+    % [can skip this] Copy files from NAS (server 1) (need to connect the same LAN)
     % nasstatus      = dlRNX3fromNAS(d,stationrecallist,R_path);
     delete(RINEX_path + "*n") %% remove nav file, use nav from CDDIS
-    %% Download NAV from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/2024/brdc]
+    % Download NAV from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/2024/brdc]
     navstatus      = getgnssnav(d,RINEX_path);
-    %% Download DCB from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
+    % Download DCB from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
     DCB_file = getgnssdcb(d,DCB_path);
     DCB = readgnssdcb(DCB_file,DCB_path);
-    %% Check RINEX file
+    % Check RINEX file
     file_rcvstatus = checkRINEX(d,RINEX_path);
-    %% Read RINEX file and Calculate TEC/ROTI and save in .mat file
+    % Read RINEX file and Calculate TEC/ROTI and save in .mat file
     cal_status     = rnx2tec30(file_rcvstatus,d,DCB,RINEX_path,mat_path,outname);
 end
 % mat21Dgraph30(d,stationplotlists,S_path,F_path)

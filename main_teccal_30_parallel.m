@@ -49,6 +49,7 @@ filelist = string({dir("RINEX\*."+yr_str+"o").name});
 doy_list = extractBetween(filelist,5,7);
 DCB_gz_list = {"blahblah.gz"};
 count = 1;
+index_list = zeros(numel(filelist),1,"uint16");
 for f = filelist
     % outname = char(outname); %convert to single-quote string (array of char)
     doy = str2double(extractBetween(f,5,7));

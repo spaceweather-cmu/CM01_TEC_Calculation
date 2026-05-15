@@ -128,7 +128,7 @@ for st = 1:size(rnxstat,1)
         otype = otype(2:end);
         [pairing, pindex, lindex] = obstype2pair(otype);  % find all combination
         if isempty(pairing)
-            disp([char(sys_name) ' system: No paring '])
+            disp(sys_name + " system: No paring ")
             continue
         end
         %% Choose paring
@@ -186,16 +186,16 @@ for st = 1:size(rnxstat,1)
                 typepair(:,pind) = pairing(best_pair,:);
 
                 if sum(~isnan(P1+P2))<length(gpst)/2 || sum(~isnan(L1+L2))<length(gpst)/2
-                    % disp(['SYS:' char(sys_name) ' PRN# ... ' num2str(prn) ' - Not enough pseudoranges pair:' char(pairing(pr,1)) '-' char(pairing(pr,2))])
+                    % disp("SYS:" +sys_name + " PRN# ... " + num2str(prn) + " - Not enough pseudoranges pair:" + pairing(pr,1) + '-' + pairing(pr,2))
                     continue
                 end
                 flag = 1;
             catch
-                % disp([char(sys_name) ' system has enogth data of this pair:' char(pairing(pr,1)) '-' char(pairing(pr,2))])
+                % disp(sys_name + " system has not enough data of this pair:" + pairing(pr,1) + '-' + pairing(pr,2))
                 continue
             end
             if flag==0
-                % disp(['SYS:' char(sys_name) ' PRN# ... ' num2str(prn) ' - Not enough pseudoranges'])
+                % disp("SYS:" +sys_name + " PRN# ... " + num2str(prn) + " - Not enough pseudoranges")
                 continue
             end
             try
@@ -295,7 +295,7 @@ for st = 1:size(rnxstat,1)
         eval([station_name '.' systemname '.rdcb   = rdcb;'])
         eval([station_name '.' systemname '.sdcb   = sdcb;'])
 
-        disp(['Finish ' systemname ' at ' station_name ' station'])
+        disp("Finish " + systemname + " at " + station_name + " station")
     end
 
     %% inter system biases correction
@@ -303,9 +303,9 @@ for st = 1:size(rnxstat,1)
     % eval([station_name '= intersystembias(' station_name ');']);
     %% Save file
     eval(station_name + ".z_rcvpos   = refpos;")
-    if ~isempty(S_path+year);mkdir(S_path+year);end
-    % if ~isempty(S_path + year + '\' + doy_str);mkdir(S_path + year + '\' + doy_str);end
-    %filename = [S_path year '\' doy '\TECROTI_' doy '_' year month dt '_' station_name '.mat'];
+    if ~exist(S_path+year,"dir");mkdir(S_path+year);end
+    % if ~exist(S_path + year + '\' + doy_str,"dir");mkdir(S_path + year + '\' + doy_str);end
+    %filename = S_path year + '\' + doy + "\TECROTI_" + doy + '_' + year + month + dt + '_' + station_name + ".mat";
     filename = S_path + year + '\' + outname + ".mat";
     save(filename,station_name)
     disp("Complete to Calculate TEC at " + station_name + " station")
