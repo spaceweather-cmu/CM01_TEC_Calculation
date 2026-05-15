@@ -47,7 +47,20 @@ yr_str = extractAfter(year_str,2);
 
 filelist = string({dir("RINEX\*."+yr_str+"o").name});
 doy_list = extractBetween(filelist,5,7);
-date_head = datetime("0000-01-01");
+DCB_gz_list = {"blahblah.gz"};
+count = 1;
+for f = filelist
+    % outname = char(outname); %convert to single-quote string (array of char)
+    doy = str2double(extractBetween(f,5,7));
+    d = datetime("1-Jan-" + year_str) + (doy-1);
+    DCB_gz = getgnssdcb(d,DCB_path);
+    if DCB_gz == DCB_gz_list{count}
+        count = count+1;
+        DCB_gz_list{count} = DCB_gz;
+    end
+end
+DCB_gz_list(1) = [];
+count = count-1;
 
 % prepare DCB
 

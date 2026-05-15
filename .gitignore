@@ -8,3 +8,4 @@ RINEX/
 *.mat
 *.crx.gz
 *.V3status
+*.asv
