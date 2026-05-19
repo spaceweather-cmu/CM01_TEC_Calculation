@@ -47,38 +47,45 @@ yr_str = extractAfter(year_str,2);
 
 filelist = string({dir("RINEX\*."+yr_str+"o").name});
 doy_list = extractBetween(filelist,5,7);
-DCB_gz_list = {"blahblah.gz"};
-count = 1;
+
+[~, outname_list, ~] = fileparts(filelist);
+DT_list = datetime("1-Jan-" + year_str) + (str2double(doy_list)-1);
+
+%listing needed DCB
+DCB_file_list = {"blahblah.gz"}; % assign first element with random file name, will be deleted
+count = 0;
 index_list = zeros(numel(filelist),1,"uint16");
-for f = filelist
+for i = 1:numel(filelist)
     % outname = char(outname); %convert to single-quote string (array of char)
-    doy = str2double(extractBetween(f,5,7));
-    d = datetime("1-Jan-" + year_str) + (doy-1);
+    d = DT_list(i); % datetime is created based on available *.25/26n files 
     DCB_gz = getgnssdcb(d,DCB_path);
-    if DCB_gz == DCB_gz_list{count}
+    % append if DCB of such file is not obtained yet
+    if ~strcmp(DCB_gz,DCB_file_list(end))
         count = count+1;
-        DCB_gz_list{count} = DCB_gz;
+        DCB_file_list(end+1) = {DCB_gz};
     end
+    index_list(i) = count;
 end
-DCB_gz_list(1) = [];
-count = count-1;
+DCB_file_list(1) = [];
 
 % prepare DCB
+DCB_list = cell(size(DCB_file_list));
+for i = 1:numel(DCB_file_list)
+    DCB_list{i} = readgnssdcb(DCB_file_list{i},DCB_path);
+end
 
-for index = 1:size(filelist,1)
+% sharedDCB = parallel.pool.Constant(DCB_list);
+% sharedidx = parallel.pool.Constant(index_list);
+parfor i = 1:numel(filelist)
     
-    [~, outname, ~] = fileparts(filelist(index));
-    % outname = char(outname); %convert to single-quote string (array of char)
+    outname = outname_list(i);
     doy = str2double(extractBetween(outname,5,7));
-    d = datetime("1-Jan-" + year_str) + (doy-1);
-    station = extractBefore(outname,5);
+    d = DT_list(i);
+    % station = extractBefore(outname,5);
     
     disp(outname)
-    disp(station)
+    % disp(station)
     disp(d)
-    
-    % check save file
-    % stationcall = checksavefiles(d,station,S_path);
 
     if exist(mat_path+outname+".mat","file")
         continue
@@ -87,13 +94,13 @@ for index = 1:size(filelist,1)
     % nasstatus      = dlRNX3fromNAS(d,stationrecallist,R_path);
     % delete("*n") %% remove nav file, use nav from CDDIS
     % Download NAV from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/data/daily/2024/brdc]
-    % navstatus      = getgnssnav(d,RINEX_path);
-    % Download DCB from CDDIS [ftp://gdc.cddis.eosdis.nasa.gov/pub/gps/products/mgex/dcb/]
-    DCB = getgnssdcb(d,DCB_path);
+    navstatus      = getgnssnav(d,RINEX_path);
     % Check RINEX file
-    % file_rcvstatus = checkRINEX(d,RINEX_path);
+    file_rcvstatus = checkRINEX(d,RINEX_path);
     % Read RINEX file and Calculate TEC/ROTI and save in .mat file
-    % cal_status     = rnx2tec30(file_rcvstatus,d,DCB,R_path,S_path,outname);
+    ii = index_list(i);
+    DCB = DCB_list{ii};
+    cal_status     = rnx2tec30(file_rcvstatus,d,DCB,RINEX_path,mat_path,outname);
 end
 % mat21Dgraph30(d,station,S_path,F_path)
 

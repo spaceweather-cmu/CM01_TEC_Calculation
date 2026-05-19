@@ -33,7 +33,7 @@ if isempty(DCB_list) % download if DCB file does not exist
         for attempt = 1:4       
             % download DCB file (from CAS)
             DCB_name_gz = perfix(i) + year_str + doy_str + "0000_01D_01D_DCB."+suffix(i)+".gz";
-            [status, ~] = system("..\apps\curl.exe -u " + username + " -O --ftp-ssl " + url + DCB_name_gz);
+            [status, ~] = system("..\apps\curl.exe -u " + username + " -O --ssl-reqd " + url + DCB_name_gz); % --ftp-ssl
             if status == 0
                 download_success = true;
                 break;
