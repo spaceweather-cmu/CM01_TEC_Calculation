@@ -47,8 +47,8 @@ ROTI            = Rate Of Change TEC Index
 # :eyes:  Getting Started for contributors
 -- If you want to work on the terminal or Visual Studio 
 ```bash id="c0v2r9"
-git clone https://github.com/Tatphicha/TEC_CMU.git
-cd TEC_CMU
+git clone https://github.com/spaceweather-cmu/CM01_TEC_dev.git
+cd CM01_TEC_dev
 ```
 :exclamation: Please work on **dev** branch :exclamation:
 
