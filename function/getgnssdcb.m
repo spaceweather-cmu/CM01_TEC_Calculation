@@ -45,8 +45,8 @@ if isempty(DCB_list) % download if DCB file does not exist
     if ~download_success; error("fail to download"); end
 
 else % in case file already exist, use it
-    disp("use existing DCB file")
     DCB_name_gz = string(DCB_list(1).name);
+    disp("file already downloaded: " + DCB_name_gz)
     %[~,DCB_name,~] = fileparts(DCB_name_gz);
 end
 cd("..")

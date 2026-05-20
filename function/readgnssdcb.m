@@ -16,7 +16,7 @@ while ~feof(fileID)
     lineNumber = lineNumber + 1;
     
     if startsWith(line, "*BIAS SVN_")
-        fprintf('Found at line %d: %s\n', lineNumber, line);
+        % fprintf('Found at line %d: %s\n', lineNumber, line);
         idx_header = lineNumber;
         break; % Stop after finding the first instance
     end
@@ -27,7 +27,7 @@ while ~feof(fileID)
     lineNumber = lineNumber + 1;
     
     if startsWith(line, "-BIAS/SOLUTION")
-        fprintf('Found at line %d: %s\n', lineNumber, line);
+        % fprintf('Found at line %d: %s\n', lineNumber, line);
         idx_end = lineNumber-1;
         break; % Stop after finding the first instance
     end
