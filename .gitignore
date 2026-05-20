@@ -9,3 +9,4 @@ RINEX/
 *.crx.gz
 *.V3status
 *.asv
+*.pyc
