@@ -2,17 +2,16 @@ function stationrecallist = checksavefiles(d,station,S_path)
 
 % doy
 c_path = [pwd '\'];
-[yr,doy] = find_doy(d);
-date = datevec(d);
-yr   = num2str(yr);
-mth  = num2str(date(2),'%.2d');
-dt   = num2str(date(3),'%.2d');
-doy  = num2str(doy,'%.3d');
+
+year_str = string(d,"yyyy");
+doy_str      = string(d,"DDD");
+mth_str  = string(d,"MM");
+day   = string(d,"d");
 
 % check unzip
-zip_results = dir([S_path yr '\' doy '\*.zip' ]);
+zip_results = dir(S_path + year_str + "\" + doy_str + "\*.zip");
 if ~isempty(zip_results)
-    cd([S_path yr '\' doy '\'])
+    cd(S_path + year_str + "\" + doy_str + "\")
     unzip(zip_results.name);
     delete(zip_results.name);
     cd(c_path)
@@ -21,7 +20,7 @@ lsf = 1;
 stationrecallist = {};
 for st = 1:size(station,2)
     station_name = station{st};
-    filename = [S_path yr '\' doy '\*' station_name '.mat'];
+    filename = S_path + year_str + "\" + doy_str + "\*" + station_name + ".mat";
     testfile = dir(filename);
     if isempty(testfile)
         stationrecallist{lsf} = station_name;

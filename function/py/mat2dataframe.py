@@ -15,7 +15,8 @@ def mat2dataframe(matfile):
     mth = date[1]
     dt = date[2]
 
-    T_list = [None]*(len(fdata)-1)
+    # T_list = [None]*(len(fdata)-1)
+    T_list = {}
 
     for i, sys in enumerate(fdata[:-1]):
         # print(sys)
@@ -35,10 +36,9 @@ def mat2dataframe(matfile):
         system = pd.DataFrame({'system': [sys]*SOD.shape[0]})
 
         SOD = pd.DataFrame({'SOD':SOD+1}) # Convert back to 1-based for output consistency
-        T = pd.concat([system, SOD, nPRN, vtec, stec, roti, ipplat, ipplon], axis=1)
-        # print(T.head()) # inspect the first few rows of the DataFrame
-        T_list[i] = T # Store the DataFrame in the list
-
+        T_list[sys] = pd.concat([system, SOD, nPRN, vtec, stec, roti, ipplat, ipplon], axis=1)
+        # print(T_list[sys].head()) # inspect the first few rows of the DataFrame
+        print(sys, type(sys))
     return T_list, fdata[:-1] # return DataFrames of all systems
 
 if __name__ == "__main__":
@@ -47,4 +47,3 @@ if __name__ == "__main__":
     matfilename = f'{mat_dir}{station}.mat'
 
     T_list = mat2dataframe(matfilename)
-

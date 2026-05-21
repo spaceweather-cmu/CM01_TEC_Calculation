@@ -1,0 +1,12 @@
+DCB/
+*.BIA.gz
+*.BIA
+*.BSX.gz
+*.BSX
+
+RINEX/
+*.mat
+*.crx.gz
+*.V3status
+*.asv
+*.pyc
