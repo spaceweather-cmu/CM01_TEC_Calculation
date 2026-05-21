@@ -14,7 +14,7 @@ if days(today - d) < 25 % 25 days
 end
 disp(DCB_date)
 % get doy calculation
-doy_str      = string(DCB_date,"ddd");
+doy_str      = string(DCB_date,"DDD");
 year_str     = string(DCB_date,"yyyy");
 
 DCB_list = dir("*_" + year_str + doy_str + "0000_01D_01D_DCB.*.gz");

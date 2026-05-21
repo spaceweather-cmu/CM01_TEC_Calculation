@@ -23,7 +23,7 @@ close all;clear
 warning off
 
 % =========== Program's path ==========================
-main_path = "C:\Users\Jumbo\Desktop\TEC_CMU\";             % Program path
+main_path = "D:\Tat_ss\IRI\TEC\github\CM01_TEC_dev";             % Program path
 cd(main_path)
 addpath("function\"); % for calling function from other directory
 RINEX_path = "RINEX\";     % RINEX path
@@ -107,4 +107,4 @@ end
 % Delete observation file to save memory
 % cd(RINEX_path)
 % delete('*d','*o','*n')
-cd(main_path)
+cd(main_path) 
