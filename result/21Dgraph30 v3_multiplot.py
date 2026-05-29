@@ -1,5 +1,5 @@
 # originally created by N'Meen 
-# modified by Jumbo
+# modified by Jumbo n Tat
 
 import pandas as pd
 import numpy as np
@@ -182,25 +182,6 @@ def plot_tec_roti_gnss_combined(all_dfs, stname, sys_list, date_str):
     
     return output_filename
 
-# ----------------------------------------------------
-
-# os.chdir('../pandasDataFrame/CM013100_DF')
-
-# matfile = 'CM010020'
-# TEC, fdata = mat2dataframe(f'result/mat/{year}/{matfile}.mat')
-
-# station = matfile[0:4]
-# doy = int(matfile[4:7])
-# DATE_ACTUAL = datetime.strptime(f'{year}-{doy:03d}', '%Y-%j').strftime('%Y-%m-%d')
-
-# print(DATE_ACTUAL, doy, station)
-
-# all_dfs = load_or_simulate_data(TEC, matfile, SYSTEM_LIST)
-
-# # 4. Generate the combined GNSS plot
-# output_file = plot_tec_roti_gnss_combined(all_dfs, matfile, SYSTEM_LIST, DATE_ACTUAL)
-
-# print(f"Output file: {output_file}")
 year = 2026
 SYSTEM_LIST = ['BDS', 'GAL', 'GPS', 'GLO', 'QZS']
 mat_dir = f'result/mat/{year}/'
@@ -214,14 +195,8 @@ for filepath in sorted(matfiles):
 
     print("\nProcessing:", matfile)
 
-    # -----------------------------
-    # 1. Read MAT file
-    # -----------------------------
     TEC, fdata = mat2dataframe(filepath)
 
-    # -----------------------------
-    # 2. Decode station + DOY safely
-    # -----------------------------
     station = matfile[:4]
 
     try:
@@ -237,14 +212,9 @@ for filepath in sorted(matfiles):
 
     print(DATE_ACTUAL, doy, station)
 
-    # -----------------------------
-    # 3. Build data for plotting
-    # -----------------------------
     all_dfs = load_or_simulate_data(TEC, matfile, SYSTEM_LIST)
 
-    # -----------------------------
-    # 4. Plot
-    # -----------------------------
+
     output_file = plot_tec_roti_gnss_combined(
         all_dfs,
         matfile,
