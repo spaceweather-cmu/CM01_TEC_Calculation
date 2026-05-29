@@ -74,6 +74,7 @@ git pull origin dev
 Here are the steps to read TEC data from MATLAB:
 
 1. main program is "main_teccal_30.m" to get file.mat💡
+2. For reducing multiple files, use "main_teccal_30_parallel2.m."💡
 
 
 👉 change outname (ex "CM013160"), stations, and p_path as your directory the you will get matfile in **Results** folder.
@@ -83,12 +84,12 @@ Here are the steps to read TEC data from MATLAB:
 👉 To test the program, please download the RINEX file from https://drive.google.com/drive/folders/13-18mmAL4U4alot1mx9xbqvDfGlgyGbc?usp=sharing to folder RINEX
 
 
-2. "Run **mat2dataframe.p**y in the result folder to get file.csv. [-- MATLAB (**convertmat2csv.m**) also works!)]"
-3. plot data from csv using 21Dgraph30.py (an example plot for CM013160 from P'Jumbo) :point_down::point_down:
+2. "Run **mat2csv.py** in the result folder to get file.csv. [-- MATLAB (**convertmat2csv.m**) also works!)]"
+3. plot data from csv using 21Dgraph30 v3.py or 21Dgraph30 v3_miltiplot.py (an example plot for CM013160 from Aekawit) :point_down::point_down:
 ## 
 <img src="result/figure//Example_plot_from_JB_CM013160.jpg" width="600">
 
 
 ## 📜 License
 
-© 2026 CM01 | Tatpicha n JumboAekawit
+© 2026 CM01 | Aekawit (jumboaekawit@gmail.com) n Tatphicha (ptatphicha@gmail.com)
