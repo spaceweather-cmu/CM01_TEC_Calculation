@@ -43,6 +43,7 @@ DCB.rcv         = Receiver DCB
 prm.elevation   = elevation angle
 ROTI            = Rate Of Change TEC Index
 ```
+<<<<<<< HEAD
 
 # :eyes:  Getting Started for contributors
 -- If you want to work on the terminal or Visual Studio 
@@ -68,6 +69,8 @@ git checkout -b dev origin/dev
 git pull origin dev
 ```
 
+=======
+>>>>>>> 23a4fce65c0bb0b4e318bc1134d7518557cc8386
 # :zap: TEC_CMU
 :triangular_flag_on_post: This example only runs one file for now—please wait for an update. :zzz: :sleeping::sleeping:
 
