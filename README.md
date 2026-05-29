@@ -43,7 +43,6 @@ DCB.rcv         = Receiver DCB
 prm.elevation   = elevation angle
 ROTI            = Rate Of Change TEC Index
 ```
-<<<<<<< HEAD
 
 # :zap: TEC_CMU
 :triangular_flag_on_post: This example only runs one file for now—please wait for an update. :zzz: :sleeping::sleeping:
